@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {Volume2} from 'lucide-react-native';
 import {type Card} from '../../../shared/database/repositories/cardRepository';
+import {speak, stopSpeaking} from '../../../shared/services/tts';
 import {colors} from '../../../shared/theme/colors';
 import {spacing} from '../../../shared/theme/spacing';
 import {typography} from '../../../shared/theme/typography';
@@ -9,9 +11,19 @@ interface Props {
   card: Card;
   isFlipped: boolean;
   onFlip: () => void;
+  languageName: string;
 }
 
-export default function FlashCard({card, isFlipped, onFlip}: Props) {
+export default function FlashCard({card, isFlipped, onFlip, languageName}: Props) {
+  useEffect(() => {
+    if (isFlipped) {
+      speak(card.back, languageName);
+    }
+    return () => {
+      stopSpeaking();
+    };
+  }, [isFlipped, card.back, languageName]);
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -20,9 +32,25 @@ export default function FlashCard({card, isFlipped, onFlip}: Props) {
         {isFlipped ? (
           <View style={styles.backContainer}>
             <View style={styles.divider} />
-            <Text style={styles.backText}>{card.back}</Text>
+            <View style={styles.backRow}>
+              <Text style={styles.backText}>{card.back}</Text>
+              <TouchableOpacity
+                style={styles.speakBtn}
+                onPress={() => speak(card.back, languageName)}
+                activeOpacity={0.7}>
+                <Volume2 size={20} color={colors.primary} />
+              </TouchableOpacity>
+            </View>
             {card.example_phrase ? (
-              <Text style={styles.exampleText}>"{card.example_phrase}"</Text>
+              <View style={styles.exampleRow}>
+                <Text style={styles.exampleText}>"{card.example_phrase}"</Text>
+                <TouchableOpacity
+                  style={styles.speakBtn}
+                  onPress={() => speak(card.example_phrase!, languageName)}
+                  activeOpacity={0.7}>
+                  <Volume2 size={18} color={colors.textSecondary} />
+                </TouchableOpacity>
+              </View>
             ) : null}
           </View>
         ) : (
@@ -65,17 +93,31 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
     marginVertical: spacing.lg,
   },
+  backRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
   backText: {
     ...typography.cardBack,
     color: colors.primary,
     textAlign: 'center',
   },
+  speakBtn: {
+    padding: spacing.xs,
+  },
+  exampleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.md,
+    gap: spacing.xs,
+  },
   exampleText: {
     ...typography.body,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginTop: spacing.md,
     fontStyle: 'italic',
+    flex: 1,
   },
   revealBtn: {
     marginTop: spacing.xl,

@@ -17,7 +17,7 @@ type Route = RouteProp<RootStackParamList, 'Study'>;
 export default function StudyScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
-  const {languageId} = route.params;
+  const {languageId, languageName} = route.params;
 
   const {cards, currentIndex, isFlipped, flipCard, loadSession, rateAndAdvance, isDone, getSessionStats, resetSession} =
     useStudySession(languageId);
@@ -97,7 +97,7 @@ export default function StudyScreen() {
           </View>
         </View>
 
-        <FlashCard card={current} isFlipped={isFlipped} onFlip={flipCard} />
+        <FlashCard card={current} isFlipped={isFlipped} onFlip={flipCard} languageName={languageName} />
 
         {isFlipped && <RatingButtons onRate={rateAndAdvance} />}
       </View>
