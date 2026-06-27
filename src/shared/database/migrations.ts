@@ -1,0 +1,177 @@
+import {getDatabase} from './database';
+
+export function runMigrations(): void {
+  const db = getDatabase();
+
+  db.executeSync(`
+    CREATE TABLE IF NOT EXISTS languages (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      name       TEXT    NOT NULL UNIQUE,
+      created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.executeSync(`
+    CREATE TABLE IF NOT EXISTS cards (
+      id               INTEGER PRIMARY KEY AUTOINCREMENT,
+      language_id      INTEGER NOT NULL REFERENCES languages(id) ON DELETE CASCADE,
+      front            TEXT    NOT NULL,
+      back             TEXT    NOT NULL,
+      example_phrase   TEXT,
+      interval_days    REAL    NOT NULL DEFAULT 0,
+      repetitions      INTEGER NOT NULL DEFAULT 0,
+      ease_factor      REAL    NOT NULL DEFAULT 2.5,
+      last_reviewed_at TEXT,
+      next_review_at   TEXT    NOT NULL DEFAULT (datetime('now')),
+      created_at       TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.executeSync(
+    'CREATE INDEX IF NOT EXISTS idx_cards_language_id ON cards(language_id)',
+  );
+
+  db.executeSync(
+    'CREATE INDEX IF NOT EXISTS idx_cards_next_review ON cards(next_review_at)',
+  );
+
+  db.executeSync(`
+    CREATE TABLE IF NOT EXISTS word_lists (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      language_id INTEGER NOT NULL REFERENCES languages(id) ON DELETE CASCADE,
+      name        TEXT    NOT NULL,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.executeSync(
+    'CREATE INDEX IF NOT EXISTS idx_word_lists_language_id ON word_lists(language_id)',
+  );
+
+  db.executeSync(`
+    CREATE TABLE IF NOT EXISTS words (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      word_list_id INTEGER NOT NULL REFERENCES word_lists(id) ON DELETE CASCADE,
+      word         TEXT    NOT NULL,
+      translation  TEXT    NOT NULL,
+      created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.executeSync(
+    'CREATE INDEX IF NOT EXISTS idx_words_word_list_id ON words(word_list_id)',
+  );
+
+  seedIfEmpty();
+}
+
+function seedIfEmpty(): void {
+  const db = getDatabase();
+  const result = db.executeSync('SELECT COUNT(*) as count FROM languages');
+  const count = (result.rows[0]?.count as number | undefined) ?? 0;
+
+  if (count > 0) {
+    return;
+  }
+
+  seedLanguage(db, 'Inglês', [
+    {front: 'Eu', back: 'I', example: 'I like to work.'},
+    {front: 'Você', back: 'You', example: 'You are my friend.'},
+    {front: 'Gostar', back: 'To like', example: 'I like to study.'},
+    {front: 'Trabalhar', back: 'To work', example: 'I like to work every day.'},
+    {front: 'Estudar', back: 'To study', example: 'I like to study English.'},
+    {front: 'Comer', back: 'To eat', example: 'I like to eat.'},
+    {front: 'Dormir', back: 'To sleep', example: 'I need to sleep.'},
+    {front: 'Casa', back: 'House / Home', example: 'I go home.'},
+    {front: 'Carro', back: 'Car', example: 'I have a red car.'},
+    {front: 'Vermelho', back: 'Red', example: 'I have a red car.'},
+  ]);
+
+  seedLanguage(db, 'Russo', [
+    {front: 'Eu', back: 'Я (Ya)', example: 'Я учу русский язык.'},
+    {front: 'Você', back: 'Ты (Ty)', example: 'Ты мой друг.'},
+    {front: 'Gostar', back: 'Нравиться (Nravitsya)', example: 'Мне нравится учиться.'},
+    {front: 'Trabalhar', back: 'Работать (Rabotat\')', example: 'Я работаю каждый день.'},
+    {front: 'Estudar', back: 'Учиться (Uchitsya)', example: 'Я хочу учиться.'},
+    {front: 'Comer', back: 'Есть (Yest\')', example: 'Я люблю есть хлеб.'},
+    {front: 'Dormir', back: 'Спать (Spat\')', example: 'Мне нужно спать.'},
+    {front: 'Casa', back: 'Дом (Dom)', example: 'Я иду домой.'},
+    {front: 'Carro', back: 'Машина (Mashina)', example: 'У меня красная машина.'},
+    {front: 'Vermelho', back: 'Красный (Krasnyy)', example: 'Небо не красное.'},
+  ]);
+
+  seedLanguage(db, 'Alemão', [
+    {front: 'Eu', back: 'Ich', example: 'Ich lerne Deutsch.'},
+    {front: 'Você', back: 'Du', example: 'Du bist mein Freund.'},
+    {front: 'Gostar', back: 'Mögen', example: 'Ich mag Deutsch lernen.'},
+    {front: 'Trabalhar', back: 'Arbeiten', example: 'Ich arbeite jeden Tag.'},
+    {front: 'Estudar', back: 'Lernen', example: 'Ich möchte Deutsch lernen.'},
+    {front: 'Comer', back: 'Essen', example: 'Ich esse gern Brot.'},
+    {front: 'Dormir', back: 'Schlafen', example: 'Ich muss schlafen.'},
+    {front: 'Casa', back: 'Haus', example: 'Ich gehe nach Hause.'},
+    {front: 'Carro', back: 'Auto', example: 'Ich habe ein rotes Auto.'},
+    {front: 'Vermelho', back: 'Rot', example: 'Der Himmel ist nicht rot.'},
+  ]);
+
+  seedLanguage(db, 'Francês', [
+    {front: 'Eu', back: 'Je', example: 'Je veux apprendre le français.'},
+    {front: 'Você', back: 'Tu', example: 'Tu es mon ami.'},
+    {front: 'Gostar', back: 'Aimer', example: 'J\'aime étudier.'},
+    {front: 'Trabalhar', back: 'Travailler', example: 'J\'aime travailler chaque jour.'},
+    {front: 'Estudar', back: 'Étudier', example: 'Je veux étudier le français.'},
+    {front: 'Comer', back: 'Manger', example: 'J\'aime manger du pain.'},
+    {front: 'Dormir', back: 'Dormir', example: 'J\'ai besoin de dormir.'},
+    {front: 'Casa', back: 'Maison', example: 'Je rentre à la maison.'},
+    {front: 'Carro', back: 'Voiture', example: 'J\'ai une voiture rouge.'},
+    {front: 'Vermelho', back: 'Rouge', example: 'Le ciel n\'est pas rouge.'},
+  ]);
+
+  seedLanguage(db, 'Espanhol', [
+    {front: 'Eu', back: 'Yo', example: 'Yo quiero aprender español.'},
+    {front: 'Você', back: 'Tú', example: 'Tú eres mi amigo.'},
+    {front: 'Gostar', back: 'Gustar', example: 'Me gusta estudiar.'},
+    {front: 'Trabalhar', back: 'Trabajar', example: 'Me gusta trabajar cada día.'},
+    {front: 'Estudar', back: 'Estudiar', example: 'Quiero estudiar español.'},
+    {front: 'Comer', back: 'Comer', example: 'Me gusta comer tacos.'},
+    {front: 'Dormir', back: 'Dormir', example: 'Necesito dormir más.'},
+    {front: 'Casa', back: 'Casa', example: 'Voy a casa.'},
+    {front: 'Carro', back: 'Coche', example: 'Tengo un coche rojo.'},
+    {front: 'Vermelho', back: 'Rojo', example: 'El cielo no es rojo.'},
+  ]);
+
+  seedLanguage(db, 'Italiano', [
+    {front: 'Eu', back: 'Io', example: 'Io studio italiano.'},
+    {front: 'Você', back: 'Tu', example: 'Tu sei il mio amico.'},
+    {front: 'Gostar', back: 'Piacere', example: 'Mi piace studiare.'},
+    {front: 'Trabalhar', back: 'Lavorare', example: 'Mi piace lavorare ogni giorno.'},
+    {front: 'Estudar', back: 'Studiare', example: 'Voglio studiare l\'italiano.'},
+    {front: 'Comer', back: 'Mangiare', example: 'Mi piace mangiare la pizza.'},
+    {front: 'Dormir', back: 'Dormire', example: 'Ho bisogno di dormire.'},
+    {front: 'Casa', back: 'Casa', example: 'Vado a casa.'},
+    {front: 'Carro', back: 'Macchina', example: 'Ho una macchina rossa.'},
+    {front: 'Vermelho', back: 'Rosso', example: 'Il cielo non è rosso.'},
+  ]);
+}
+
+function seedLanguage(
+  db: ReturnType<typeof import('./database').getDatabase>,
+  name: string,
+  cards: {front: string; back: string; example: string}[],
+): void {
+  db.executeSync('INSERT INTO languages (name) VALUES (?)', [name]);
+  const langResult = db.executeSync('SELECT last_insert_rowid() as id');
+  const languageId = langResult.rows[0]?.['last_insert_rowid()'] as number | undefined
+    ?? langResult.rows[0]?.id as number | undefined;
+
+  if (!languageId) {
+    return;
+  }
+
+  for (const card of cards) {
+    db.executeSync(
+      `INSERT INTO cards (language_id, front, back, example_phrase, next_review_at)
+       VALUES (?, ?, ?, ?, datetime('now'))`,
+      [languageId, card.front, card.back, card.example],
+    );
+  }
+}
