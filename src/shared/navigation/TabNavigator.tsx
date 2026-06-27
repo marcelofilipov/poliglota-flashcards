@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {CalendarDays, Globe} from 'lucide-react-native';
+import {CalendarDays, Globe, BookOpen} from 'lucide-react-native';
 import {type RootStackParamList} from './RootNavigator.types';
 import {colors} from '../theme/colors';
 
@@ -13,6 +13,12 @@ import CardFormScreen from '../../features/cards/screens/CardFormScreen';
 import ImportCsvScreen from '../../features/cards/screens/ImportCsvScreen';
 import StudyScreen from '../../features/study/screens/StudyScreen';
 import StudyResultScreen from '../../features/study/screens/StudyResultScreen';
+import WordBankScreen from '../../features/wordbank/screens/WordBankScreen';
+import WordListsScreen from '../../features/wordbank/screens/WordListsScreen';
+import WordListFormScreen from '../../features/wordbank/screens/WordListFormScreen';
+import WordListDetailScreen from '../../features/wordbank/screens/WordListDetailScreen';
+import WordFormScreen from '../../features/wordbank/screens/WordFormScreen';
+import PasteWordsScreen from '../../features/wordbank/screens/PasteWordsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,6 +47,19 @@ function HomeStack() {
   );
 }
 
+function WordBankStack() {
+  return (
+    <Stack.Navigator screenOptions={{headerStyle: {backgroundColor: colors.surface}, headerTitleStyle: {color: colors.textPrimary}}}>
+      <Stack.Screen name="WordBankHome" component={WordBankScreen} options={{title: 'Banco de Palavras'}} />
+      <Stack.Screen name="WordLists" component={WordListsScreen} options={({route}) => ({title: route.params.languageName})} />
+      <Stack.Screen name="WordListForm" component={WordListFormScreen} options={({route}) => ({title: route.params.listId ? 'Renomear Lista' : 'Nova Lista'})} />
+      <Stack.Screen name="WordListDetail" component={WordListDetailScreen} options={({route}) => ({title: route.params.listName})} />
+      <Stack.Screen name="WordForm" component={WordFormScreen} options={({route}) => ({title: route.params.wordId ? 'Editar Palavra' : 'Nova Palavra'})} />
+      <Stack.Screen name="WordPaste" component={PasteWordsScreen} options={{title: 'Colar Palavras'}} />
+    </Stack.Navigator>
+  );
+}
+
 export default function TabNavigator() {
   return (
     <Tab.Navigator
@@ -56,6 +75,14 @@ export default function TabNavigator() {
         options={{
           title: 'Hoje',
           tabBarIcon: ({color, size}) => <CalendarDays color={color} size={size} />,
+        }}
+      />
+      <Tab.Screen
+        name="WordBankTab"
+        component={WordBankStack}
+        options={{
+          title: 'Palavras',
+          tabBarIcon: ({color, size}) => <BookOpen color={color} size={size} />,
         }}
       />
       <Tab.Screen

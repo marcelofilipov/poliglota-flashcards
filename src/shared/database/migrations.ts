@@ -35,6 +35,33 @@ export function runMigrations(): void {
     'CREATE INDEX IF NOT EXISTS idx_cards_next_review ON cards(next_review_at)',
   );
 
+  db.executeSync(`
+    CREATE TABLE IF NOT EXISTS word_lists (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      language_id INTEGER NOT NULL REFERENCES languages(id) ON DELETE CASCADE,
+      name        TEXT    NOT NULL,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.executeSync(
+    'CREATE INDEX IF NOT EXISTS idx_word_lists_language_id ON word_lists(language_id)',
+  );
+
+  db.executeSync(`
+    CREATE TABLE IF NOT EXISTS words (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      word_list_id INTEGER NOT NULL REFERENCES word_lists(id) ON DELETE CASCADE,
+      word         TEXT    NOT NULL,
+      translation  TEXT    NOT NULL,
+      created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.executeSync(
+    'CREATE INDEX IF NOT EXISTS idx_words_word_list_id ON words(word_list_id)',
+  );
+
   seedIfEmpty();
 }
 
