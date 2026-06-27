@@ -1,6 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {CalendarDays, Globe} from 'lucide-react-native';
 import {type RootStackParamList} from './RootNavigator.types';
 import {colors} from '../theme/colors';
 
@@ -49,8 +50,22 @@ export default function TabNavigator() {
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {backgroundColor: colors.surface, borderTopColor: colors.border},
       }}>
-      <Tab.Screen name="HomeTab" component={HomeStack} options={{title: 'Hoje'}} />
-      <Tab.Screen name="LanguagesTab" component={LanguagesStack} options={{title: 'Idiomas'}} />
+      <Tab.Screen
+        name="HomeTab"
+        component={HomeStack}
+        options={{
+          title: 'Hoje',
+          tabBarIcon: ({color, size}) => <CalendarDays color={color} size={size} />,
+        }}
+      />
+      <Tab.Screen
+        name="LanguagesTab"
+        component={LanguagesStack}
+        options={{
+          title: 'Idiomas',
+          tabBarIcon: ({color, size}) => <Globe color={color} size={size} />,
+        }}
+      />
     </Tab.Navigator>
   );
 }

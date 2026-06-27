@@ -5,7 +5,7 @@ export type RootStackParamList = {
   CardForm: {languageId: number; cardId?: number};
   ImportCsv: {languageId: number};
   Study: {languageId: number; languageName: string};
-  StudyResult: {studied: number; correct: number; languageId: number};
+  StudyResult: {studied: number; correct: number; wrong: number; hard: number; easy: number; veryEasy: number; languageId: number};
   Home: undefined;
 };
 

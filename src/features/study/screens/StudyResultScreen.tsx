@@ -7,7 +7,6 @@ import {format, parseISO} from 'date-fns';
 import {ptBR} from 'date-fns/locale';
 import {type RootStackParamList} from '../../../shared/navigation/RootNavigator.types';
 import {cardRepository} from '../../../shared/database/repositories/cardRepository';
-import {useStudySessionStore} from '../../../shared/store/studySessionStore';
 import {colors} from '../../../shared/theme/colors';
 import {spacing} from '../../../shared/theme/spacing';
 import {typography} from '../../../shared/theme/typography';
@@ -18,15 +17,9 @@ type Route = RouteProp<RootStackParamList, 'StudyResult'>;
 export default function StudyResultScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
-  const {studied, languageId} = route.params;
-  const ratings = useStudySessionStore(s => s.ratings);
+  const {studied, wrong, hard, easy, veryEasy, languageId} = route.params;
   const [nextReview, setNextReview] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const wrong = Object.values(ratings).filter(r => r === 0).length;
-  const hard = Object.values(ratings).filter(r => r === 1).length;
-  const easy = Object.values(ratings).filter(r => r === 2).length;
-  const veryEasy = Object.values(ratings).filter(r => r === 3).length;
 
   useEffect(() => {
     cardRepository.findByLanguage(languageId).then(cards => {

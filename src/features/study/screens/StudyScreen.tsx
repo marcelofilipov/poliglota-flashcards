@@ -47,6 +47,10 @@ export default function StudyScreen() {
       navigation.replace('StudyResult', {
         studied: stats.studied,
         correct: stats.correct,
+        wrong: stats.wrong,
+        hard: stats.hard,
+        easy: stats.easy,
+        veryEasy: stats.veryEasy,
         languageId,
       });
     }
