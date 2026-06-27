@@ -60,6 +60,19 @@ function seedIfEmpty(): void {
     {front: 'Vermelho', back: 'Red', example: 'I have a red car.'},
   ]);
 
+  seedLanguage(db, 'Alemão', [
+    {front: 'Eu', back: 'Ich', example: 'Ich lerne Deutsch.'},
+    {front: 'Você', back: 'Du', example: 'Du bist mein Freund.'},
+    {front: 'Gostar', back: 'Mögen', example: 'Ich mag Deutsch lernen.'},
+    {front: 'Trabalhar', back: 'Arbeiten', example: 'Ich arbeite jeden Tag.'},
+    {front: 'Estudar', back: 'Lernen', example: 'Ich möchte Deutsch lernen.'},
+    {front: 'Comer', back: 'Essen', example: 'Ich esse gern Brot.'},
+    {front: 'Dormir', back: 'Schlafen', example: 'Ich muss schlafen.'},
+    {front: 'Casa', back: 'Haus', example: 'Ich gehe nach Hause.'},
+    {front: 'Carro', back: 'Auto', example: 'Ich habe ein rotes Auto.'},
+    {front: 'Vermelho', back: 'Rot', example: 'Der Himmel ist nicht rot.'},
+  ]);
+
   seedLanguage(db, 'Francês', [
     {front: 'Eu', back: 'Je', example: 'Je veux apprendre le français.'},
     {front: 'Você', back: 'Tu', example: 'Tu es mon ami.'},
