@@ -1368,10 +1368,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@op-engineering/op-sqlite@^11.0.0":
-  version "11.4.9"
-  resolved "https://registry.yarnpkg.com/@op-engineering/op-sqlite/-/op-sqlite-11.4.9.tgz#75f2dce8de9cf3e27ee10a1473166e627166b8fa"
-  integrity sha512-gVj/m7UDCC11h8Fb/elLtT8Q2Fm8wIURkKRWZvV0FP1sLpZB+07N6ezktjGJroN7TV4/VQjGrYuu3GxgHse4HA==
+"@op-engineering/op-sqlite@^17.1.0":
+  version "17.1.0"
+  resolved "https://registry.yarnpkg.com/@op-engineering/op-sqlite/-/op-sqlite-17.1.0.tgz#d44c79c720d980514e75e1a7965a9db31ad1e4e3"
+  integrity sha512-2WxVTO55GZD73PJuen2HO2CZ2NBA07YAqfAlkoOkuBmgvyiTlz4BvL7MScHuRCPInZTHD6fzKIlubqWqmAey/w==
 
 "@react-native-community/cli-clean@20.1.0":
   version "20.1.0"
