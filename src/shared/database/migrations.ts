@@ -60,6 +60,19 @@ function seedIfEmpty(): void {
     {front: 'Vermelho', back: 'Red', example: 'I have a red car.'},
   ]);
 
+  seedLanguage(db, 'Russo', [
+    {front: 'Eu', back: 'Я (Ya)', example: 'Я учу русский язык.'},
+    {front: 'Você', back: 'Ты (Ty)', example: 'Ты мой друг.'},
+    {front: 'Gostar', back: 'Нравиться (Nravitsya)', example: 'Мне нравится учиться.'},
+    {front: 'Trabalhar', back: 'Работать (Rabotat\')', example: 'Я работаю каждый день.'},
+    {front: 'Estudar', back: 'Учиться (Uchitsya)', example: 'Я хочу учиться.'},
+    {front: 'Comer', back: 'Есть (Yest\')', example: 'Я люблю есть хлеб.'},
+    {front: 'Dormir', back: 'Спать (Spat\')', example: 'Мне нужно спать.'},
+    {front: 'Casa', back: 'Дом (Dom)', example: 'Я иду домой.'},
+    {front: 'Carro', back: 'Машина (Mashina)', example: 'У меня красная машина.'},
+    {front: 'Vermelho', back: 'Красный (Krasnyy)', example: 'Небо не красное.'},
+  ]);
+
   seedLanguage(db, 'Alemão', [
     {front: 'Eu', back: 'Ich', example: 'Ich lerne Deutsch.'},
     {front: 'Você', back: 'Du', example: 'Du bist mein Freund.'},
