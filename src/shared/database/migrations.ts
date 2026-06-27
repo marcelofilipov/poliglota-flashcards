@@ -47,16 +47,7 @@ function seedIfEmpty(): void {
     return;
   }
 
-  db.executeSync("INSERT INTO languages (name) VALUES ('Inglês')");
-  const langResult = db.executeSync('SELECT last_insert_rowid() as id');
-  const languageId = langResult.rows[0]?.['last_insert_rowid()'] as number | undefined
-    ?? langResult.rows[0]?.id as number | undefined;
-
-  if (!languageId) {
-    return;
-  }
-
-  const seedCards = [
+  seedLanguage(db, 'Inglês', [
     {front: 'Eu', back: 'I', example: 'I like to work.'},
     {front: 'Você', back: 'You', example: 'You are my friend.'},
     {front: 'Gostar', back: 'To like', example: 'I like to study.'},
@@ -67,9 +58,37 @@ function seedIfEmpty(): void {
     {front: 'Casa', back: 'House / Home', example: 'I go home.'},
     {front: 'Carro', back: 'Car', example: 'I have a red car.'},
     {front: 'Vermelho', back: 'Red', example: 'I have a red car.'},
-  ];
+  ]);
 
-  for (const card of seedCards) {
+  seedLanguage(db, 'Italiano', [
+    {front: 'Eu', back: 'Io', example: 'Io studio italiano.'},
+    {front: 'Você', back: 'Tu', example: 'Tu sei il mio amico.'},
+    {front: 'Gostar', back: 'Piacere', example: 'Mi piace studiare.'},
+    {front: 'Trabalhar', back: 'Lavorare', example: 'Mi piace lavorare ogni giorno.'},
+    {front: 'Estudar', back: 'Studiare', example: 'Voglio studiare l\'italiano.'},
+    {front: 'Comer', back: 'Mangiare', example: 'Mi piace mangiare la pizza.'},
+    {front: 'Dormir', back: 'Dormire', example: 'Ho bisogno di dormire.'},
+    {front: 'Casa', back: 'Casa', example: 'Vado a casa.'},
+    {front: 'Carro', back: 'Macchina', example: 'Ho una macchina rossa.'},
+    {front: 'Vermelho', back: 'Rosso', example: 'Il cielo non è rosso.'},
+  ]);
+}
+
+function seedLanguage(
+  db: ReturnType<typeof import('./database').getDatabase>,
+  name: string,
+  cards: {front: string; back: string; example: string}[],
+): void {
+  db.executeSync('INSERT INTO languages (name) VALUES (?)', [name]);
+  const langResult = db.executeSync('SELECT last_insert_rowid() as id');
+  const languageId = langResult.rows[0]?.['last_insert_rowid()'] as number | undefined
+    ?? langResult.rows[0]?.id as number | undefined;
+
+  if (!languageId) {
+    return;
+  }
+
+  for (const card of cards) {
     db.executeSync(
       `INSERT INTO cards (language_id, front, back, example_phrase, next_review_at)
        VALUES (?, ?, ?, ?, datetime('now'))`,
